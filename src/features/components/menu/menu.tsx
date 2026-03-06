@@ -4,10 +4,19 @@ export default function Menu({
   onNewProjectName,
   onNewProject,
   onSelectedProject,
+  onDeleteProject,
 }) {
   const listItems = projects.map((project) => (
     <li key={project.id} onClick={() => onSelectedProject(project)}>
       {project.name}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onDeleteProject(project);
+        }}
+      >
+        Delete
+      </button>
     </li>
   ));
 

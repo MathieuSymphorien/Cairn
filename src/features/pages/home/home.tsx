@@ -26,8 +26,16 @@ export default function Home() {
   }
 
   function handleSelectedProject(project) {
-    console.log(project);
+    // console.log(project);
     setSelectedProject(project);
+  }
+
+  function handleDeleteProject(project) {
+    setProjects(projects.filter((p) => p.id !== project.id));
+    if (selectedProject.id == project.id) {
+      setSelectedProject(null);
+      console.log("selected project deleted");
+    }
   }
 
   return (
@@ -37,6 +45,7 @@ export default function Home() {
           projects={projects}
           newProjectName={newProjectName}
           onSelectedProject={handleSelectedProject}
+          onDeleteProject={handleDeleteProject}
           onNewProjectName={handleNewProjectName}
           onNewProject={handleNewProject}
         />

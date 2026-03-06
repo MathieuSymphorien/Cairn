@@ -9,8 +9,18 @@ export default function WorkSpace({ project }) {
   ));
 
   return (
-    <div>
-      <ul>{listItems}</ul>
-    </div>
+    <>
+      <div>
+        <ul>{listItems}</ul>
+      </div>
+      <div>
+        <select>
+          <option value="todo">To Do</option>
+          <option value="inprogress">In Progress</option>
+          <option value="done">Done</option>
+        </select>
+        <button>Ajouter un item</button>
+      </div>
+    </>
   );
 }
