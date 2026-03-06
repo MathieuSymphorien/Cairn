@@ -26,7 +26,6 @@ export default function Home() {
   }
 
   function handleSelectedProject(project) {
-    // console.log(project);
     setSelectedProject(project);
   }
 
@@ -34,7 +33,6 @@ export default function Home() {
     setProjects(projects.filter((p) => p.id !== project.id));
     if (selectedProject.id == project.id) {
       setSelectedProject(null);
-      console.log("selected project deleted");
     }
   }
 
