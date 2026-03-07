@@ -1,7 +1,7 @@
 Application Desktop pour mes besoins dans ma gestion de projet.
 
 
-EXPLICATION 
+EXPLICATION SUR LES FICHIERS GENERES PAR CLAUDE CODE
 
 5. `image-paste-handler.ts`
 
