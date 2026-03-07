@@ -1,0 +1,62 @@
+// FICHIER GENERE PAR CLAUDE CODE
+import { Extension } from "@tiptap/core";
+import { Plugin, PluginKey } from "@tiptap/pm/state";
+
+function readFileAsBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+export const ImagePasteHandler = Extension.create({
+  name: "imagePasteHandler",
+
+  addProseMirrorPlugins() {
+    const { editor } = this;
+
+    return [
+      new Plugin({
+        key: new PluginKey("imagePasteHandler"),
+
+        props: {
+          handlePaste(_view, event) {
+            const files = event.clipboardData?.files;
+            if (!files?.length) return false;
+
+            for (const file of files) {
+              if (!file.type.startsWith("image/")) continue;
+
+              event.preventDefault();
+              readFileAsBase64(file).then((src) => {
+                editor.chain().focus().setImage({ src }).run();
+              });
+              return true;
+            }
+
+            return false;
+          },
+
+          handleDrop(_view, event) {
+            const files = event.dataTransfer?.files;
+            if (!files?.length) return false;
+
+            for (const file of files) {
+              if (!file.type.startsWith("image/")) continue;
+
+              event.preventDefault();
+              readFileAsBase64(file).then((src) => {
+                editor.chain().focus().setImage({ src }).run();
+              });
+              return true;
+            }
+
+            return false;
+          },
+        },
+      }),
+    ];
+  },
+});

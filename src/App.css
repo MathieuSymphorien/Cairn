@@ -122,3 +122,84 @@
     @apply bg-background text-foreground;
     }
 }
+
+/* TipTap editor styles */
+.tiptap {
+  @apply outline-none min-h-[200px];
+}
+
+.tiptap > * + * {
+  @apply mt-3;
+}
+
+.tiptap p {
+  @apply text-foreground leading-relaxed;
+}
+
+.tiptap h1 {
+  @apply text-3xl font-bold text-foreground mt-6 mb-2;
+}
+
+.tiptap h2 {
+  @apply text-2xl font-semibold text-foreground mt-5 mb-2;
+}
+
+.tiptap h3 {
+  @apply text-xl font-semibold text-foreground mt-4 mb-1;
+}
+
+.tiptap ul {
+  @apply list-disc pl-6 my-2;
+}
+
+.tiptap ol {
+  @apply list-decimal pl-6 my-2;
+}
+
+.tiptap li {
+  @apply my-1;
+}
+
+.tiptap code {
+  @apply bg-muted text-sm font-mono px-1.5 py-0.5 rounded-sm;
+}
+
+.tiptap pre {
+  @apply bg-muted rounded-lg p-4 my-3 overflow-x-auto;
+}
+
+.tiptap pre code {
+  @apply bg-transparent p-0;
+}
+
+.tiptap blockquote {
+  @apply border-l-4 border-border pl-4 italic text-muted-foreground my-3;
+}
+
+.tiptap hr {
+  @apply border-border my-6;
+}
+
+.tiptap img {
+  @apply max-w-full h-auto rounded-lg my-3;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  @apply text-muted-foreground pointer-events-none float-left h-0;
+  content: attr(data-placeholder);
+}
+
+/* Drawing canvas styles */
+.drawing-container {
+  @apply relative my-3 rounded-lg border border-border inline-block;
+}
+
+.drawing-canvas {
+  @apply rounded-lg cursor-crosshair block;
+  touch-action: none;
+  background: var(--muted);
+}
+
+.drawing-toolbar {
+  @apply absolute top-2 right-2 flex gap-1;
+}

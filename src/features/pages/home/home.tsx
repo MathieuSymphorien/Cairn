@@ -15,7 +15,7 @@ export default function Home() {
       {
         id: projects.length + 1,
         name: newProjectName,
-        cards: [],
+        content: "<p>Commence à écrire...</p>",
       },
     ]);
     setNewProjectName("");
@@ -27,6 +27,16 @@ export default function Home() {
 
   function handleSelectedProject(project) {
     setSelectedProject(project);
+  }
+
+  function handleEditorUpdate(content: string) {
+    if (!selectedProject) return;
+    // console.log(content);
+    setProjects(
+      projects.map((p) =>
+        p.id === selectedProject.id ? { ...p, content } : p,
+      ),
+    );
   }
 
   function handleDeleteProject(project) {
@@ -49,7 +59,7 @@ export default function Home() {
         />
       </div>
       <div>
-        <WorkSpace project={selectedProject} />
+        <WorkSpace project={selectedProject} onUpdate={handleEditorUpdate} />
       </div>
     </div>
   );
