@@ -9,11 +9,12 @@ import { Bold, Italic } from "lucide-react";
 import Toolbar from "./toolbar";
 import { ImagePasteHandler } from "./image-paste-handler";
 import { DrawingNode } from "./drawing-node";
+import type { JSONContent } from "@tiptap/core";
 import type { Project } from "@/shared/types/project";
 
 interface WorkSpaceProps {
   project: Project | null;
-  onUpdate?: (content: string) => void;
+  onUpdate?: (content: JSONContent) => void;
 }
 
 export default function WorkSpace({ project, onUpdate }: WorkSpaceProps) {
@@ -26,9 +27,9 @@ export default function WorkSpace({ project, onUpdate }: WorkSpaceProps) {
       ImagePasteHandler,
       DrawingNode,
     ],
-    content: project?.content ?? "<p>Commence à écrire...</p>",
+    content: project?.content ?? { type: "doc", content: [{ type: "paragraph" }] },
     onUpdate: ({ editor }) => {
-      onUpdate?.(editor.getHTML());
+      onUpdate?.(editor.getJSON());
     },
   });
 
@@ -66,7 +67,9 @@ export default function WorkSpace({ project, onUpdate }: WorkSpaceProps) {
             variant="ghost"
             size="icon-sm"
             onClick={() => editor.chain().focus().toggleBold().run()}
-            className={cn(editor.isActive("bold") && "bg-accent text-accent-foreground")}
+            className={cn(
+              editor.isActive("bold") && "bg-accent text-accent-foreground",
+            )}
           >
             <Bold className="size-4" />
           </Button>
@@ -74,7 +77,9 @@ export default function WorkSpace({ project, onUpdate }: WorkSpaceProps) {
             variant="ghost"
             size="icon-sm"
             onClick={() => editor.chain().focus().toggleItalic().run()}
-            className={cn(editor.isActive("italic") && "bg-accent text-accent-foreground")}
+            className={cn(
+              editor.isActive("italic") && "bg-accent text-accent-foreground",
+            )}
           >
             <Italic className="size-4" />
           </Button>

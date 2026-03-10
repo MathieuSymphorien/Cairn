@@ -4,11 +4,27 @@ export const mockProjects: Project[] = [
   {
     id: 1,
     name: "Project Alpha",
-    content: "<p>Contenu du projet Alpha</p>",
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Contenu du projet Alpha" }],
+        },
+      ],
+    },
   },
   {
     id: 2,
     name: "Project Beta",
-    content: "<p>Contenu du projet Beta</p>",
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Contenu du projet Beta" }],
+        },
+      ],
+    },
   },
 ];

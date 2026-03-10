@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { JSONContent } from "@tiptap/core";
 import Menu from "../../components/menu/menu";
 import WorkSpace from "../../components/workspace/workspace";
 import "./home.css";
@@ -15,7 +16,7 @@ export default function Home() {
       {
         id: projects.length + 1,
         name: newProjectName,
-        content: "<p>Commence à écrire...</p>",
+        content: { type: "doc", content: [{ type: "paragraph" }] },
       },
     ]);
     setNewProjectName("");
@@ -29,9 +30,9 @@ export default function Home() {
     setSelectedProject(project);
   }
 
-  function handleEditorUpdate(content: string) {
+  function handleEditorUpdate(content: JSONContent) {
     if (!selectedProject) return;
-    // console.log(content);
+    console.log(content);
     setProjects(
       projects.map((p) =>
         p.id === selectedProject.id ? { ...p, content } : p,
