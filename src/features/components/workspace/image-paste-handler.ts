@@ -11,6 +11,21 @@ function readFileAsBase64(file: File): Promise<string> {
   });
 }
 
+function handleImageFiles(
+  files: FileList,
+  editor: ReturnType<Extension["editor"]["chain"]> extends never ? never : any,
+): boolean {
+  for (const file of files) {
+    if (!file.type.startsWith("image/")) continue;
+
+    readFileAsBase64(file).then((src) => {
+      editor.chain().focus().setImage({ src }).run();
+    });
+    return true;
+  }
+  return false;
+}
+
 export const ImagePasteHandler = Extension.create({
   name: "imagePasteHandler",
 
@@ -26,37 +41,49 @@ export const ImagePasteHandler = Extension.create({
             const files = event.clipboardData?.files;
             if (!files?.length) return false;
 
-            for (const file of files) {
-              if (!file.type.startsWith("image/")) continue;
-
-              event.preventDefault();
-              readFileAsBase64(file).then((src) => {
-                editor.chain().focus().setImage({ src }).run();
-              });
-              return true;
-            }
-
-            return false;
+            event.preventDefault();
+            return handleImageFiles(files, editor);
           },
 
-          handleDrop(_view, event) {
-            const files = event.dataTransfer?.files;
+          handleDrop(_view, event, _slice, moved) {
+            if (moved) return false;
+
+            const dragEvent = event as unknown as DragEvent;
+            const files = dragEvent.dataTransfer?.files;
             if (!files?.length) return false;
 
-            for (const file of files) {
-              if (!file.type.startsWith("image/")) continue;
-
-              event.preventDefault();
-              readFileAsBase64(file).then((src) => {
-                editor.chain().focus().setImage({ src }).run();
-              });
-              return true;
-            }
-
-            return false;
+            event.preventDefault();
+            return handleImageFiles(files, editor);
           },
         },
       }),
     ];
+  },
+
+  // Ajouter les listeners DOM directement sur l'éditeur
+  onCreate() {
+    const { editor } = this;
+    const element = editor.view.dom;
+
+    element.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    });
+
+    element.addEventListener("drop", (e) => {
+      const files = e.dataTransfer?.files;
+      if (!files?.length) return;
+
+      for (const file of files) {
+        if (!file.type.startsWith("image/")) continue;
+
+        e.preventDefault();
+        e.stopPropagation();
+        readFileAsBase64(file).then((src) => {
+          editor.chain().focus().setImage({ src }).run();
+        });
+        return;
+      }
+    });
   },
 });
