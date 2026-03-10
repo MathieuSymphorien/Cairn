@@ -1,24 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { JSONContent } from "@tiptap/core";
+import type { Project } from "@/shared/types/project";
 import Menu from "../../components/menu/menu";
 import WorkSpace from "../../components/workspace/workspace";
 import "./home.css";
-import { mockProjects } from "../../../shared/mockdata/mockdata";
+import {
+  getProjects,
+  createProject,
+  updateProject,
+  deleteProject,
+} from "@/shared/api/projects";
 
 export default function Home() {
-  const [projects, setProjects] = useState(mockProjects);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [newProjectName, setNewProjectName] = useState("");
-  const [selectedProject, setSelectedProject] = useState(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const saveTimerRef = useRef<number | null>(null);
 
-  function handleNewProject() {
-    setProjects([
-      ...projects,
-      {
-        id: projects.length + 1,
-        name: newProjectName,
-        content: { type: "doc", content: [{ type: "paragraph" }] },
-      },
-    ]);
+  // Charger les projets depuis la BDD au démarrage
+  useEffect(() => {
+    getProjects().then(setProjects);
+  }, []);
+
+  async function handleNewProject() {
+    if (!newProjectName.trim()) return;
+    const project = await createProject(newProjectName);
+    setProjects([...projects, project]);
     setNewProjectName("");
   }
 
@@ -26,23 +33,31 @@ export default function Home() {
     setNewProjectName(name);
   }
 
-  function handleSelectedProject(project) {
+  function handleSelectedProject(project: Project) {
     setSelectedProject(project);
   }
 
   function handleEditorUpdate(content: JSONContent) {
     if (!selectedProject) return;
-    console.log(content);
+
+    // Mettre à jour l'état local immédiatement (pas de lag)
+    const updated = { ...selectedProject, content };
     setProjects(
-      projects.map((p) =>
-        p.id === selectedProject.id ? { ...p, content } : p,
-      ),
+      projects.map((p) => (p.id === updated.id ? updated : p)),
     );
+    setSelectedProject(updated);
+
+    // Debounce : sauvegarder en BDD 500ms après la dernière frappe
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = window.setTimeout(() => {
+      updateProject(updated);
+    }, 500);
   }
 
-  function handleDeleteProject(project) {
+  async function handleDeleteProject(project: Project) {
+    await deleteProject(project.id);
     setProjects(projects.filter((p) => p.id !== project.id));
-    if (selectedProject.id == project.id) {
+    if (selectedProject?.id === project.id) {
       setSelectedProject(null);
     }
   }
