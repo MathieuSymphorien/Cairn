@@ -5,10 +5,20 @@ export default function Menu({
   onNewProject,
   onSelectedProject,
   onDeleteProject,
+  onExportProject,
+  onImportProject,
 }) {
   const listItems = projects.map((project) => (
     <li key={project.id} onClick={() => onSelectedProject(project)}>
       {project.name}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onExportProject(project);
+        }}
+      >
+        Export
+      </button>
       <button
         onClick={(e) => {
           e.stopPropagation();
@@ -29,6 +39,7 @@ export default function Menu({
         placeholder="Nom"
       />
       <button onClick={onNewProject}>New Project</button>
+      <button onClick={onImportProject}>Import</button>
       <ul>{listItems}</ul>
     </div>
   );

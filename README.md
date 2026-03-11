@@ -1,9 +1,11 @@
 Application Desktop pour mes besoins dans ma gestion de projet.
 
+Pour lancer le projet :
+pnpm tauri dev
 
 EXPLICATION SUR LES FICHIERS GENERES PAR CLAUDE CODE
 
-5. `image-paste-handler.ts`
+## Fichier `image-paste-handler.ts` /
 
 Ce fichier crée une **extension TipTap custom** (un plugin qui ajoute un comportement). Ligne par ligne :
 
@@ -30,7 +32,7 @@ Elle prend un fichier (image) et le convertit en texte base64 (une longue chaîn
 
 ---
 
-## 6. `drawing-node.ts`
+## Fichier `drawing-node.ts`
 
 Ce fichier **définit un nouveau type de bloc** dans TipTap. Par défaut, TipTap connaît : paragraphes, titres, images, listes... Ici on lui apprend un nouveau type : **"drawing"**.
 
@@ -68,7 +70,7 @@ C'est du TypeScript avancé — ça dit "la commande `insertDrawing` existe" pou
 
 ---
 
-## 7. `drawing-canvas.tsx`
+## Fichier `drawing-canvas.tsx`
 
 Le composant React qui **affiche et gère le canvas de dessin**. Le flux complet :
 

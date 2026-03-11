@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
 import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
+import { CustomImage } from "./custom-image";
 import { Button } from "@/features/ui/button";
 import { cn } from "@/lib/utils";
 import { Bold, Italic } from "lucide-react";
@@ -23,7 +23,7 @@ export default function WorkSpace({ project, onUpdate }: WorkSpaceProps) {
       StarterKit.configure({
         heading: { levels: [1, 2, 3] },
       }),
-      Image.configure({ allowBase64: true }),
+      CustomImage.configure({ allowBase64: true }),
       ImagePasteHandler,
       DrawingNode,
     ],

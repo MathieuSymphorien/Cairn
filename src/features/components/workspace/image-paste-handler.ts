@@ -1,6 +1,6 @@
-// FICHIER GENERE PAR CLAUDE CODE
 import { Extension } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
+import { saveImage } from "@/shared/api/projects";
 
 function readFileAsBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -11,16 +11,17 @@ function readFileAsBase64(file: File): Promise<string> {
   });
 }
 
-function handleImageFiles(
-  files: FileList,
-  editor: ReturnType<Extension["editor"]["chain"]> extends never ? never : any,
-): boolean {
+async function saveAndInsertImage(file: File, editor: any) {
+  const dataUri = await readFileAsBase64(file);
+  // saveImage returns "cairn-local://filename" — stored directly in content
+  const localRef = await saveImage(dataUri);
+  editor.chain().focus().setImage({ src: localRef }).run();
+}
+
+function handleImageFiles(files: FileList, editor: any): boolean {
   for (const file of files) {
     if (!file.type.startsWith("image/")) continue;
-
-    readFileAsBase64(file).then((src) => {
-      editor.chain().focus().setImage({ src }).run();
-    });
+    saveAndInsertImage(file, editor);
     return true;
   }
   return false;
@@ -40,18 +41,15 @@ export const ImagePasteHandler = Extension.create({
           handlePaste(_view, event) {
             const files = event.clipboardData?.files;
             if (!files?.length) return false;
-
             event.preventDefault();
             return handleImageFiles(files, editor);
           },
 
           handleDrop(_view, event, _slice, moved) {
             if (moved) return false;
-
             const dragEvent = event as unknown as DragEvent;
             const files = dragEvent.dataTransfer?.files;
             if (!files?.length) return false;
-
             event.preventDefault();
             return handleImageFiles(files, editor);
           },
@@ -60,7 +58,6 @@ export const ImagePasteHandler = Extension.create({
     ];
   },
 
-  // Ajouter les listeners DOM directement sur l'éditeur
   onCreate() {
     const { editor } = this;
     const element = editor.view.dom;
@@ -73,15 +70,11 @@ export const ImagePasteHandler = Extension.create({
     element.addEventListener("drop", (e) => {
       const files = e.dataTransfer?.files;
       if (!files?.length) return;
-
       for (const file of files) {
         if (!file.type.startsWith("image/")) continue;
-
         e.preventDefault();
         e.stopPropagation();
-        readFileAsBase64(file).then((src) => {
-          editor.chain().focus().setImage({ src }).run();
-        });
+        saveAndInsertImage(file, editor);
         return;
       }
     });

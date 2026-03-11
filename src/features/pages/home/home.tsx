@@ -9,6 +9,8 @@ import {
   createProject,
   updateProject,
   deleteProject,
+  exportProject,
+  importProject,
 } from "@/shared/api/projects";
 
 export default function Home() {
@@ -17,7 +19,6 @@ export default function Home() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const saveTimerRef = useRef<number | null>(null);
 
-  // Charger les projets depuis la BDD au démarrage
   useEffect(() => {
     getProjects().then(setProjects);
   }, []);
@@ -40,18 +41,26 @@ export default function Home() {
   function handleEditorUpdate(content: JSONContent) {
     if (!selectedProject) return;
 
-    // Mettre à jour l'état local immédiatement (pas de lag)
     const updated = { ...selectedProject, content };
-    setProjects(
-      projects.map((p) => (p.id === updated.id ? updated : p)),
-    );
+    setProjects(projects.map((p) => (p.id === updated.id ? updated : p)));
     setSelectedProject(updated);
 
-    // Debounce : sauvegarder en BDD 500ms après la dernière frappe
+    // Debounce save — content has cairn-local:// refs, safe to store directly
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = window.setTimeout(() => {
       updateProject(updated);
     }, 500);
+  }
+
+  async function handleExportProject(project: Project) {
+    await exportProject(project);
+  }
+
+  async function handleImportProject() {
+    const project = await importProject();
+    if (project) {
+      setProjects([...projects, project]);
+    }
   }
 
   async function handleDeleteProject(project: Project) {
@@ -72,6 +81,8 @@ export default function Home() {
           onDeleteProject={handleDeleteProject}
           onNewProjectName={handleNewProjectName}
           onNewProject={handleNewProject}
+          onExportProject={handleExportProject}
+          onImportProject={handleImportProject}
         />
       </div>
       <div>
