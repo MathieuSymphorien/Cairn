@@ -15,11 +15,15 @@ export function ImageView({ node }: NodeViewProps) {
 
     if (src.startsWith("cairn-local://")) {
       const filename = src.replace("cairn-local://", "");
-      readImage(filename).then(setDisplaySrc).catch(() => setDisplaySrc(null));
+      readImage(filename)
+        .then(setDisplaySrc)
+        .catch(() => setDisplaySrc(null));
     } else if (src.startsWith("https://cairn-img.localhost/")) {
       // Legacy format
       const filename = src.replace("https://cairn-img.localhost/", "");
-      readImage(filename).then(setDisplaySrc).catch(() => setDisplaySrc(null));
+      readImage(filename)
+        .then(setDisplaySrc)
+        .catch(() => setDisplaySrc(null));
     } else {
       // data: URI or regular URL — use directly
       setDisplaySrc(src);
@@ -29,7 +33,7 @@ export function ImageView({ node }: NodeViewProps) {
   if (!displaySrc) {
     return (
       <NodeViewWrapper>
-        <div className="inline-block w-16 h-16 bg-muted rounded animate-pulse" />
+        <div />
       </NodeViewWrapper>
     );
   }

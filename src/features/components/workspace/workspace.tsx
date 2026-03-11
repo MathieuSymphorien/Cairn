@@ -3,8 +3,6 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
 import StarterKit from "@tiptap/starter-kit";
 import { CustomImage } from "./custom-image";
-import { Button } from "@/features/ui/button";
-import { cn } from "@/lib/utils";
 import { Bold, Italic } from "lucide-react";
 import Toolbar from "./toolbar";
 import { ImagePasteHandler } from "./image-paste-handler";
@@ -27,7 +25,10 @@ export default function WorkSpace({ project, onUpdate }: WorkSpaceProps) {
       ImagePasteHandler,
       DrawingNode,
     ],
-    content: project?.content ?? { type: "doc", content: [{ type: "paragraph" }] },
+    content: project?.content ?? {
+      type: "doc",
+      content: [{ type: "paragraph" }],
+    },
     onUpdate: ({ editor }) => {
       onUpdate?.(editor.getJSON());
     },
@@ -41,48 +42,27 @@ export default function WorkSpace({ project, onUpdate }: WorkSpaceProps) {
   }, [editor, project?.id]);
 
   if (!project) {
-    return (
-      <div className="flex items-center justify-center h-full text-muted-foreground">
-        Sélectionne un projet
-      </div>
-    );
+    return <div>Sélectionne un projet</div>;
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="border-b border-border bg-background px-2 py-1">
+    <div>
+      <div>
         <Toolbar editor={editor} />
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6">
+      <div>
         <EditorContent editor={editor} />
       </div>
 
       {editor && (
-        <BubbleMenu
-          editor={editor}
-          className="flex items-center gap-0.5 rounded-lg border border-border bg-background p-1 shadow-md"
-        >
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={() => editor.chain().focus().toggleBold().run()}
-            className={cn(
-              editor.isActive("bold") && "bg-accent text-accent-foreground",
-            )}
-          >
-            <Bold className="size-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-            className={cn(
-              editor.isActive("italic") && "bg-accent text-accent-foreground",
-            )}
-          >
-            <Italic className="size-4" />
-          </Button>
+        <BubbleMenu editor={editor}>
+          <button onClick={() => editor.chain().focus().toggleBold().run()}>
+            <Bold />
+          </button>
+          <button onClick={() => editor.chain().focus().toggleItalic().run()}>
+            <Italic />
+          </button>
         </BubbleMenu>
       )}
     </div>

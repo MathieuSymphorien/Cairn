@@ -2,7 +2,6 @@ import { useRef, useEffect, useCallback, useState } from "react";
 import { NodeViewWrapper } from "@tiptap/react";
 import type { NodeViewProps } from "@tiptap/react";
 import getStroke from "perfect-freehand";
-import { Button } from "@/features/ui/button";
 import { Trash2 } from "lucide-react";
 import { saveImage, readImage } from "@/shared/api/projects";
 
@@ -146,26 +145,20 @@ export function DrawingCanvas({ node, updateAttributes }: NodeViewProps) {
 
   return (
     <NodeViewWrapper>
-      <div className="drawing-container" contentEditable={false}>
+      <div contentEditable={false}>
         <canvas
           ref={canvasRef}
           width={width}
           height={height}
-          className="drawing-canvas"
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerLeave={handlePointerUp}
         />
-        <div className="drawing-toolbar">
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={handleClear}
-            title="Effacer"
-          >
-            <Trash2 className="size-4" />
-          </Button>
+        <div>
+          <button onClick={handleClear} title="Effacer">
+            <Trash2 />
+          </button>
         </div>
       </div>
     </NodeViewWrapper>
